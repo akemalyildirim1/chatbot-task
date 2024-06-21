@@ -1,5 +1,5 @@
 """HTTP API Module."""
 
-from .routers import user_router
+from .routers import dropbox_router, user_router
 
-__all__ = ["user_router"]
+__all__ = ["dropbox_router", "user_router"]

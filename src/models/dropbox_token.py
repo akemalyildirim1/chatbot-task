@@ -15,5 +15,5 @@ class DropboxToken(Base, IDMixin, TimestampMixin):
     access_token: Mapped[text]
     refresh_token: Mapped[text]
     user_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("users.id"), nullable=False, index=True
+        Integer, ForeignKey("users.id"), nullable=False, index=True, unique=True
     )
