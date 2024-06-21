@@ -1,18 +1,21 @@
 """Dropbox operations service."""
 
+from datetime import datetime, timedelta, timezone
 from typing import Final
 
 from pydantic import InstanceOf, validate_call
-from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core import InvalidInputError, NotFoundError, configuration
-from src.models import DropboxToken
+from src.core import InvalidInputError, configuration
 from src.schemas.dropbox import DropboxAuthToken
 
 from .service import Service
-from .utils import HttpResponse, get_user_id_from_teams_id, send_http_request
+from .utils import (
+    HttpResponse,
+    add_tokens_to_db,
+    get_user_id_from_teams_id,
+    send_http_request,
+)
 
 
 class DropboxLoginService(Service):
@@ -72,50 +75,10 @@ class DropboxLoginService(Service):
         user_id: int = await get_user_id_from_teams_id(
             teams_id=user_teams_id, session=session
         )
-        await self._add_tokens_to_db(user_id=user_id, tokens=tokens, session=session)
+        await add_tokens_to_db(user_id=user_id, tokens=tokens, session=session)
         return tokens
 
     # Helpers
-
-    @validate_call
-    async def _add_tokens_to_db(
-        self,
-        user_id: int,
-        tokens: DropboxAuthToken,
-        session: InstanceOf[AsyncSession],
-    ) -> None:
-        """Insert or override the access and refresh tokens to the database.
-
-        Arguments:
-            user_id: The user id.
-            tokens: The access and refresh tokens.
-            session: The database session.
-
-        Returns:
-            None.
-
-        Raises:
-            NotFoundError: If the user is not found.
-        """
-        try:
-            await session.execute(
-                insert(DropboxToken)
-                .values(
-                    user_id=user_id,
-                    access_token=tokens.access_token,
-                    refresh_token=tokens.refresh_token,
-                )
-                .on_conflict_do_update(
-                    index_elements=["user_id"],
-                    set_=dict(
-                        access_token=tokens.access_token,
-                        refresh_token=tokens.refresh_token,
-                    ),
-                )
-            )
-        except IntegrityError as error:
-            raise NotFoundError("User") from error
-
     @validate_call
     async def _get_access_and_refresh_token(self, code: str) -> DropboxAuthToken:
         """Get access and refresh token from the code of the user.
@@ -146,4 +109,6 @@ class DropboxLoginService(Service):
         return DropboxAuthToken(
             access_token=response.data["access_token"],
             refresh_token=response.data["refresh_token"],
+            expires_at=datetime.now(tz=timezone.utc)
+            + timedelta(seconds=response.data["expires_in"]),
         )

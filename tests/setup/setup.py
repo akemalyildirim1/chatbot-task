@@ -1,8 +1,9 @@
 """Test data setup."""
 
+from datetime import datetime, timezone, timedelta
 import asyncio
 
-from sqlalchemy import insert
+from sqlalchemy import insert, text
 
 from src.database import database_session_manager
 from src.models import User, DropboxToken
@@ -39,9 +40,12 @@ async def setup():
                     "user_id": 1,
                     "access_token": "test-access-token-1",
                     "refresh_token": "test-refresh-token-1",
+                    "expires_at": datetime.now(tz=timezone.utc) + timedelta(days=1),
                 },
             ],
         )
+
+        await session.execute(text("select setval('users_id_seq', 1000);"))
 
 
 if __name__ == "__main__":
