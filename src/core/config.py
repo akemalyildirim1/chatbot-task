@@ -61,6 +61,7 @@ class DropboxConfigurations(BaseModel):
 
     CLIENT_ID: str
     CLIENT_SECRET: str
+    REDIRECT_URI: str
 
 
 class Configuration(BaseSettings):

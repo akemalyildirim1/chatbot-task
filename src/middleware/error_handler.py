@@ -6,11 +6,18 @@ from fastapi import status
 from fastapi.responses import ORJSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from src.core import ConflictError, NotFoundError
+from src.core import (
+    ConflictError,
+    InvalidInputError,
+    NotFoundError,
+    UnprocessableEntityError,
+)
 
 custom_errors: dict[Type[Exception], int] = {
     ConflictError: status.HTTP_409_CONFLICT,
+    InvalidInputError: status.HTTP_400_BAD_REQUEST,
     NotFoundError: status.HTTP_404_NOT_FOUND,
+    UnprocessableEntityError: status.HTTP_422_UNPROCESSABLE_ENTITY,
 }
 
 

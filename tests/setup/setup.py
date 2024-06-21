@@ -5,7 +5,7 @@ import asyncio
 from sqlalchemy import insert
 
 from src.database import database_session_manager
-from src.models import User
+from src.models import User, DropboxToken
 
 
 async def setup():
@@ -28,6 +28,17 @@ async def setup():
                     "id": 3,
                     "teams_id": "test-user-3",
                     "name": "Test Three",
+                },
+            ],
+        )
+
+        await session.execute(
+            insert(DropboxToken),
+            [
+                {
+                    "user_id": 1,
+                    "access_token": "test-access-token-1",
+                    "refresh_token": "test-refresh-token-1",
                 },
             ],
         )

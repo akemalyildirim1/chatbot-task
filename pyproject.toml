@@ -17,6 +17,7 @@ asyncpg = "^0.29.0"
 pydantic-settings = "^2.3.3"
 pydantic = "^2.7.4"
 sqlalchemy = {extras = ["mypy"], version = "^2.0.30"}
+aiohttp = "^3.9.5"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -70,6 +71,11 @@ exclude = ["alembic", ]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
 
 [tool.coverage.report]
 skip_empty = true
