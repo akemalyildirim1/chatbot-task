@@ -1,5 +1,7 @@
 """Integration tests for dropbox service."""
 
+from datetime import datetime, timezone
+
 import pytest
 
 from src.schemas.dropbox import DropboxAuthToken
@@ -15,7 +17,9 @@ _ = dropbox_login_service
 async def mock_get_access_and_refresh_token(mocker):
     async def _get_access_and_refresh_token(*args, **kwargs):
         return DropboxAuthToken(
-            access_token="access_token", refresh_token="refresh_token"
+            access_token="access_token",
+            refresh_token="refresh_token",
+            expires_at=datetime(2024, 1, 3, 12, tzinfo=timezone.utc),
         )
 
     return mocker.patch.object(
@@ -27,14 +31,7 @@ async def mock_get_access_and_refresh_token(mocker):
 
 @pytest.fixture
 async def mock_add_tokens_to_db(mocker):
-    async def _add_tokens_to_db(*args, **kwargs):
-        return None
-
-    return mocker.patch.object(
-        DropboxLoginService,
-        "_add_tokens_to_db",
-        side_effect=_add_tokens_to_db,
-    )
+    return mocker.patch("src.service.dropbox_login.add_tokens_to_db", return_value=None)
 
 
 @pytest.fixture
@@ -65,6 +62,7 @@ class TestGenerateTokensFromCode:
             tokens=DropboxAuthToken(
                 access_token="access_token",
                 refresh_token="refresh_token",
+                expires_at=datetime(2024, 1, 3, 12, tzinfo=timezone.utc),
             ),
             session=db_session,
         )
