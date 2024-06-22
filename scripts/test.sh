@@ -10,5 +10,8 @@ if [ "$SQL_DB__HOST" != "localhost" ] && [ "$SQL_DB__HOST" != "127.0.0.1" ]; the
     exit 1
 fi
 
+poetry run python -m alembic upgrade head
+poetry run python tests/setup/teardown.py
+poetry run python tests/setup/setup.py
 poetry run python -m coverage run -m pytest -lv ${ARGS}
 poetry run python -m coverage report -m

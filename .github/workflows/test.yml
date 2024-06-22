@@ -44,5 +44,11 @@ jobs:
           poetry lock --no-update
           poetry install
 
+      - name: Start docker
+        run: docker-compose -f docker-compose.test.yml up -d
+
+      - name: Export env variables
+        run: export $(grep -v '^#' ../.env.test | xargs)
+
       - name: Project tests
         run: make coverage
