@@ -11,9 +11,3 @@ services:
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=dbpass
     command: postgres -c 'max_connections=1000'
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - 6379:6379
-    command: --requirepass redis

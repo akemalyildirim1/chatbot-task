@@ -17,10 +17,9 @@ query_router = APIRouter(
 query_service: QueryService = QueryService()
 
 
-@query_router.post(
+@query_router.get(
     "/",
     summary="Query the resources of a user.",
-    # status_code=status.HTTP_200_OK,
 )
 async def query_resources(
     query: str,

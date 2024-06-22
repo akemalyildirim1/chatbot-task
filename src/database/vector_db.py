@@ -125,7 +125,7 @@ class VectorDB(BaseModel):
             response = collection.query.near_text(
                 query=query,
                 # limit=2,
-                distance=0.5,
+                distance=0.4,
             )
 
             result: dict[str, Query] = {}
