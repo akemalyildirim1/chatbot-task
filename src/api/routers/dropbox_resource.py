@@ -2,13 +2,15 @@
 
 from typing import Annotated
 
-from api.deps import SessionDep, UserTeamsIdDependency
-from fastapi import APIRouter, Depends, Path, Query
-from fastapi.responses import ORJSONResponse
+from fastapi import APIRouter, Depends, Query
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import ORJSONResponse, StreamingResponse
 from pydantic import BaseModel
 
 from src.schemas.dropbox import DropboxFileMetadata
-from src.service.dropbox_resource import DropboxResourceService
+from src.service.dropbox.resource import DropboxResourceService
+
+from ..deps import ResourcePathParams, SessionDep, UserTeamsIdDependency
 
 dropbox_resource_router = APIRouter(
     prefix="/dropbox/resource",
@@ -22,12 +24,6 @@ class ResourceQueryParams(BaseModel):
     """Query parameters for resource operations."""
 
     resource_id: str = Query(default="", description="Resource ID.")
-
-
-class ResourcePathParams(BaseModel):
-    """Path parameters for resource operations."""
-
-    resource_id: str = Path(description="Resource ID.")
 
 
 @dropbox_resource_router.get(
@@ -45,7 +41,7 @@ async def list_resources(
         session=session,
         path=resource_query_params.resource_id,
     )
-    return ORJSONResponse(content=result)
+    return ORJSONResponse(content=jsonable_encoder(result))
 
 
 @dropbox_resource_router.get(
@@ -65,7 +61,7 @@ async def get_children(
         resource_id=resource_path_params.resource_id,
     )
 
-    return ORJSONResponse(content=result)
+    return ORJSONResponse(content=jsonable_encoder(result))
 
 
 @dropbox_resource_router.get(
@@ -84,4 +80,31 @@ async def get_resource_info(
         session=session,
         resource_id=resource_path_params.resource_id,
     )
-    return ORJSONResponse(content=result)
+    return ORJSONResponse(content=jsonable_encoder(result))
+
+
+@dropbox_resource_router.get(
+    "/{resource_id}/download/",
+    summary="Download the selected resource.",
+    response_class=StreamingResponse,
+)
+async def download_resource(
+    session: SessionDep,
+    user_teams_id_dependency: Annotated[UserTeamsIdDependency, Depends()],
+    resource_path_params: Annotated[ResourcePathParams, Depends()],
+):
+    """Download the selected resource."""
+    # This part should be updated if there is a need to download
+    #   a different file type.
+    headers = {
+        "Content-Disposition": "attachment; filename=file.pdf",
+    }
+
+    return StreamingResponse(
+        dropbox_resource_service.download_file(
+            user_teams_id=user_teams_id_dependency.teams_id,
+            session=session,
+            resource_id=resource_path_params.resource_id,
+        ),
+        headers=headers,
+    )

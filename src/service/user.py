@@ -40,3 +40,6 @@ class UserService(Service):
             await session.flush()
         except IntegrityError as e:
             raise ConflictError("User") from e
+
+        # This should be created in async way by using message queue.
+        self.vector_db.create_collection(collection_name=f"user_{new_user.id}")

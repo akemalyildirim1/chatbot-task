@@ -3,7 +3,13 @@
 from fastapi import FastAPI
 from fastapi.middleware import Middleware
 
-from src.api import dropbox_login_router, dropbox_resource_router, user_router
+from src.api import (
+    dropbox_index_router,
+    dropbox_login_router,
+    dropbox_resource_router,
+    query_router,
+    user_router,
+)
 from src.middleware import GenericErrorHandlerMiddleware
 
 app: FastAPI = FastAPI(
@@ -13,6 +19,8 @@ app: FastAPI = FastAPI(
     middleware=[Middleware(GenericErrorHandlerMiddleware)],
 )
 
+app.include_router(dropbox_index_router)
 app.include_router(dropbox_login_router)
 app.include_router(dropbox_resource_router)
 app.include_router(user_router)
+app.include_router(query_router)

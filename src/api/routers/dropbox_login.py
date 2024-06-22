@@ -6,10 +6,10 @@ from api.deps import SessionDep, UserTeamsIdDependency
 from fastapi import APIRouter, Depends, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import ORJSONResponse, RedirectResponse
+from service.dropbox.login import DropboxLoginService
 
 from src.core import UnprocessableEntityError
 from src.schemas.dropbox import DropboxAuthToken
-from src.service.dropbox_login import DropboxLoginService
 
 dropbox_login_router = APIRouter(
     prefix="/dropbox/login",

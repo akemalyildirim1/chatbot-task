@@ -2,7 +2,7 @@
 
 from typing import Annotated, AsyncGenerator
 
-from fastapi import Depends, Query
+from fastapi import Depends, Path, Query
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -26,3 +26,9 @@ class UserTeamsIdDependency(BaseModel):
             description="User's microsoft team id.",
         )
     )
+
+
+class ResourcePathParams(BaseModel):
+    """Path parameters for resource operations."""
+
+    resource_id: str = Path(description="Resource ID.")
