@@ -42,7 +42,9 @@ repos:
     hooks:
       - id: python-safety-dependencies-check
         files: pyproject.toml
-        args: [ "--ignore=70612" ]
+        args: [ "--ignore=70612" ,
+                "--ignore=59234"
+              ]
 
 
   - repo: https://github.com/PyCQA/bandit

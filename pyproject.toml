@@ -18,6 +18,9 @@ pydantic-settings = "^2.3.3"
 pydantic = "^2.7.4"
 sqlalchemy = {extras = ["mypy"], version = "^2.0.30"}
 aiohttp = "^3.9.5"
+pypdf2 = "^3.0.1"
+weaviate-client = "^4.6.5"
+tokenizers = "^0.19.1"
 
 
 [tool.poetry.group.dev.dependencies]

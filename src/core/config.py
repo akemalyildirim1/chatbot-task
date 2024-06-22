@@ -72,6 +72,7 @@ class Configuration(BaseSettings):
     SQL_DB: SqlDBConfigurations
     VECTOR_DB: VectorDBConfigurations
     DROPBOX: DropboxConfigurations
+    COHERE_API_KEY: str
 
 
 configuration: Configuration = Configuration()

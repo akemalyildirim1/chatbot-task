@@ -12,3 +12,4 @@ class TestSettings:
         assert configuration.VECTOR_DB.KEY == "secret-db-key"
         assert configuration.DROPBOX.CLIENT_ID == "dropbox-client-id"
         assert configuration.DROPBOX.CLIENT_SECRET == "dropbox-client-secret"
+        assert configuration.COHERE_API_KEY == "cohere-api-key"
